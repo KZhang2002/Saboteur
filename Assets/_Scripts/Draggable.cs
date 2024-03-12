@@ -8,20 +8,24 @@ public class Draggable : MonoBehaviour
     private Plane dragPlane; 
     private Vector3 offset;
     private Camera sceneCam;
+    private Transform parent;
+    private List<Transform> objects;
     [SerializeField] private Boolean useOffset = true;
     private void Start()
     {
         sceneCam = Camera.main;
+        parent = transform.parent;
     }
 
     private void OnMouseDown()
     {
         dragPlane = new Plane(sceneCam.transform.forward, transform.position);
         Ray camRay = sceneCam.ScreenPointToRay(Input.mousePosition);
-
+        
         float planeDistance;
         dragPlane.Raycast(camRay, out planeDistance);
-        offset = useOffset ? transform.position - camRay.GetPoint(planeDistance) : Vector3.zero;
+        
+        offset = useOffset ? parent.position - camRay.GetPoint(planeDistance) : Vector3.zero;
     }
     
     void OnMouseDrag()
@@ -29,6 +33,6 @@ public class Draggable : MonoBehaviour
         Ray camRay = sceneCam.ScreenPointToRay(Input.mousePosition);
         float planeDistance;
         dragPlane.Raycast(camRay, out planeDistance);
-        transform.position = camRay.GetPoint(planeDistance) + offset;
+        parent.position = camRay.GetPoint(planeDistance) + offset;
     }
 }
